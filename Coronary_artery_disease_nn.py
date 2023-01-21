@@ -96,3 +96,53 @@ df.isnull().sum().transpose()
 
 
 df.info()
+
+
+# Helper Functions
+
+def print_accuracy(y_test, y_pred):
+  print("%-12s %f" % ('Accuracy:', metrics.accuracy_score(y_test, y_pred)))
+  print("%-12s %f" % ('Precision:', metrics.precision_score(y_test, y_pred,labels=None, pos_label=1, average='binary', sample_weight=None)))
+  print("%-12s %f" % ('Recall:', metrics.recall_score(y_test, y_pred,labels=None, pos_label=1, average='binary', sample_weight=None)))
+  print()
+
+def draw_confusion_matrix(y_test, y_pred, classes):
+  plt.cla()
+  plt.clf()
+  matrix = confusion_matrix(y_test, y_pred)
+  plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
+  plt.title("Confusion Matrix")
+  plt.colorbar()
+  num_classes = len(classes)
+  plt.xticks(np.arange(num_classes), classes, rotation=90)
+  plt.yticks(np.arange(num_classes), classes)
+  fmt = 'd'
+  thresh = matrix.max() / 2.
+  for i, j in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
+    plt.text(j, i, format(matrix[i, j], fmt), horizontalalignment="center", color="white" if matrix[i, j] > thresh else "black")
+  plt.ylabel('True label')
+  plt.xlabel('Predicted label')
+  plt.tight_layout()
+  plt.show()
+  print()
+
+def draw_roc_curve(y_test, y_score, title, c="blue", line_width=1):
+  fpr_log_reg, tpr_log_reg, thresholds = metrics.roc_curve(y_test, y_score)
+  plt.figure(2)
+  aucroc = metrics.auc(fpr_log_reg, tpr_log_reg)
+  plt.plot(fpr_log_reg, tpr_log_reg, color=c, lw=line_width, label = 'AUC = %0.3f' % aucroc)
+  plt.title(title)
+  plt.xlabel('False Positive Rates')
+  plt.ylabel('True Positive Rates')
+  plt.legend(loc = 'lower right')
+  plt.show()
+  print()
+
+def draw_roc_curve_individual(y_test, y_score, label, line_width=1):
+  fpr_log_reg, tpr_log_reg, thresholds = metrics.roc_curve(y_test, y_score)
+  aucroc = metrics.auc(fpr_log_reg, tpr_log_reg)
+  plt.plot(fpr_log_reg, tpr_log_reg, lw=line_width, label = label + ', AUC = %0.3f' % aucroc)
+  plt.xlabel('False Positive Rates')
+  plt.ylabel('True Positive Rates')
+
+
