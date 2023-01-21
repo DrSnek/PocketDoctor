@@ -24,12 +24,24 @@ import itertools
 from sklearn.impute import SimpleImputer
 
 from sklearn import model_selection
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn import svm
 
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler
+
+!pip install tflearn
+
+from keras.models import Sequential, Model
+from keras.layers import Conv2D, Dropout, MaxPooling2D, Input
+from keras.layers import BatchNormalization, Activation, Flatten, Dense
+from tensorflow.keras import initializers
 
 
 url = "https://drive.google.com/file/d/1T_kvUBOuoVLku_N6Am1dxb1M2qZUBFf4/view?usp=sharing"
@@ -144,5 +156,67 @@ def draw_roc_curve_individual(y_test, y_score, label, line_width=1):
   plt.plot(fpr_log_reg, tpr_log_reg, lw=line_width, label = label + ', AUC = %0.3f' % aucroc)
   plt.xlabel('False Positive Rates')
   plt.ylabel('True Positive Rates')
+
+
+model = tf.keras.models.Sequential()
+model.add(Dense(64, activation='relu', input_dim=24))
+model.add(Dropout(0.35))
+model.add(Dense(32, activation='relu', input_dim=24))
+model.add(Dropout(0.35))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=250, batch_size=10)
+y_temp = model.predict(X_test)
+nn_y_score = y_temp
+y_pred = []
+for x in y_temp:
+  if x[0] < 0.5:
+    y_pred.append(0)
+  else:
+    y_pred.append(1)
+print_accuracy(y_test, y_pred)
+draw_confusion_matrix(y_test, y_pred, ["No CAD", "CAD"])
+draw_roc_curve(y_test, nn_y_score, "Neural Network - 3 hidden layers ", c="blue", line_width=1)
+
+
+user_df = pd.DataFrame(user_input, columns=["male", "age", "education", "currentSmoker", "cigsPerDay", "BPMeds", "prevalentStroke", "prevalentHyp", "diabetes", "totChol", "sysBP", "diaBP", "BMI", "heartRate", "glucose"])
+
+df = user_backup.append(user_df, ignore_index=True)
+
+X = df.drop("TenYearCHD", axis = 1)
+Y = df["TenYearCHD"].copy()
+
+print("X shape before processing is", X.shape)
+df_numerical = X.drop(["male", "education", "currentSmoker", "BPMeds", "prevalentStroke", "prevalentHyp", "diabetes"], axis = 1)
+
+numerical_pipeline = Pipeline([
+                               ("std_scaler", StandardScaler())
+                               ])
+
+numerical_features = list(df_numerical)
+categorical_features = ["male", "education", "currentSmoker", "BPMeds", "prevalentStroke", "prevalentHyp", "diabetes"]
+
+full_pipeline = ColumnTransformer([
+                ("numerical", numerical_pipeline, numerical_features), 
+                ("categorical", OneHotEncoder(), categorical_features)
+                ])
+user_inp = full_pipeline.fit_transform(X)
+
+print("X shape after processing is", user_inp.shape)
+
+
+print(X_test.shape)
+print(user_inp.shape)
+print(user_inp)
+print(type(X_test))
+
+
+u_prepared = np.array([user_inp[-1]])
+
+print(u_prepared)
+print(u_prepared.shape)
+
+y_temp = model.predict(u_prepared)
+print(float(y_temp[0])*100)
 
 
