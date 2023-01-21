@@ -1,1 +1,1 @@
-# Doctor. Medi Buddy
+# Doctor. Medi-Buddy
