@@ -80,3 +80,19 @@ X_prepared = full_pipeline.fit_transform(X)
 print("X shape after processing is", X_prepared.shape)
 np.unique(np.isnan(X_prepared), return_counts=True)
 
+
+X_train_im, X_test, y_train_im, y_test = train_test_split(X_prepared, Y, test_size = 0.2, random_state = 0)
+
+
+undersampler = RandomUnderSampler(sampling_strategy="majority", random_state=0)
+X_train, y_train = undersampler.fit_resample(X_train_im, y_train_im)
+
+df_target_sm = pd.DataFrame(y_train, columns=["TenYearCHD"])
+sns.countplot(x="TenYearCHD", data=df_target_sm, palette="pastel").set_title("Training Data Afterwards")
+sns.despine()
+
+
+df.isnull().sum().transpose()
+
+
+df.info()
