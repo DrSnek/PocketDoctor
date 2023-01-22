@@ -1,6 +1,6 @@
 # Pocket Doc
 ## By: The Pathfinding Pioneers
-# This is our submission for the Oakridge Code Fest '23.
+### This is our submission for the Oakridge Code Fest '23.
 ## Authors
 
 * [Viswanath Missula](https://github.com/vmissula)
