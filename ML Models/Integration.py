@@ -97,7 +97,7 @@ class Form1(Form1Template):
         totChol= int(self.tot_chol.text)
         sysBP= int(self.SysBP.text)
         diaBP= int(self.diaBP.text)
-        BMI=(float(self.weighter.text))/(((float(self.Heighter.text))*(float(self.Heighter.text)))/100)
+        BMI=(float(self.weighter.text))/(((float(self.Heighter.text))*(float(self.Heighter.text)))/10000)
         heartRate=int(self.heartRate.text)
         glucose=int(self.glucoser.text)
         blood_urea=int(self.Urea_level.text)
@@ -138,7 +138,7 @@ class Form1(Form1Template):
           self.Strokered.text="High chance of suffering from Strokes"
         else :
           self.Strokered.text="Low chance of suffering from Strokes"
-        Cancered= anvil.server.call('Vrishab',male, age, currentSmoker, YellowFingers, Anxiety, 1, Wheezing, Alcohol, Coughing, ShortnessBreath, Swallow, Chest_Hurts)
+        Cancered= anvil.server.call('Vrishab',male, age, currentSmoker, YellowFingers, Anxiety, 0, Wheezing, Alcohol, Coughing, ShortnessBreath, Swallow, Chest_Hurts)
         self.Lung_cancer.visible=True
         if (Cancered==1):
           self.Lung_cancer.text="High chance of suffering from Lung Cancer"
@@ -154,6 +154,7 @@ class Form1(Form1Template):
             self.Kidsney_ok.text="High Chance of kidney failure"
         else:
             self.Kidsney_ok.text="Low Chance of kidney failure"
+   
   pass
 
 
